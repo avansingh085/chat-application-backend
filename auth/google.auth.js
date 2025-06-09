@@ -5,10 +5,9 @@ require('dotenv').config();
 passport.use(new GoogleStrategy({
   clientID: process.env.GOOGLE_CLIENT_ID,
   clientSecret: process.env.GOOGLE_CLIENT_SECRET,
-  callbackURL: "http://localhost:3001/auth/google/callback"
+  callbackURL: process.env.GOOGLE_CALLBACK
 }, (accessToken, refreshToken, profile, done) => {
-  // Normally you would store user info in DB
-  // Here we just return the profile
+ console.log(profile)
   return done(null, profile);
 }));
 
@@ -19,3 +18,4 @@ passport.serializeUser((user, done) => {
 passport.deserializeUser((obj, done) => {
   done(null, obj);
 });
+
