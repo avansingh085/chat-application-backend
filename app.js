@@ -11,7 +11,7 @@ const chatRoutes=require('./routes/chat.route');
 const authRoutes=require('./routes/auth.route');
 const userRoutes=require('./routes/user.route');
  const uploadRoutes=require('./routes/upload.route');
- const groupLinkRoutes=require('./routes/groupLink.route');
+ const groupLinkRoutes=require('./routes/group.route');
 const app = express();
 
 app.use(cors({ origin: "*" }));

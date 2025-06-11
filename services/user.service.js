@@ -38,7 +38,7 @@ const getUser = async (id) => {
 
 const updateProfile = async ({ userId, status, profilePicture }) => {
     if (!userId) return { status: 400, success: false, message: "User ID is required" };
-
+  
     try {
         await User.findOneAndUpdate({ userId }, { $set: { status, profilePicture } });
         return { status: 200, success: true, message: "Profile updated successfully" };
