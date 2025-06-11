@@ -11,7 +11,7 @@ const createGroup = async (req, res) => {
 };
 
 const getConversation = async (req, res) => {
-    const response = await chatService.getConversation(req.body.id);
+    const response = await chatService.getConversation(req.user.id);
     return res.status(response.status).json(response);
 };
 

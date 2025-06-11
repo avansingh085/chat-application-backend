@@ -29,7 +29,6 @@ const getUser = async (id) => {
                 }
             }
         }));
-
         return { status: 200, success: true, User: user, Chat, ContactData };
     } catch (error) {
         console.log("Error fetching user data:", error);
