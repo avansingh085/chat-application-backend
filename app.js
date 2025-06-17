@@ -17,7 +17,6 @@ const app = express();
 app.use(cors({ origin: "*" }));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-app.use(express.static('public'));
 
 app.use('/api/auth',authRoutes);
 app.use('/api/user',userRoutes);
@@ -34,17 +33,13 @@ app.use(session({
 app.use(passport.initialize());
 app.use(passport.session());
 
-
-
-// Session Middleware
-
-
 // Routes
 app.use('/auth', authsRoutes);
 
 app.get('/', (req, res) => {
   res.send(`<a href="/auth/google">Login with Google</a>`);
 });
+
 
 
 module.exports = app;

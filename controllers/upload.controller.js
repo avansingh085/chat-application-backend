@@ -2,7 +2,7 @@ const  uploadBufferToCloudinary =require("../services/upload.service.js");
 
 module.exports=uploadImage = async (req, res) => {
   try {
-    console.log("AVAL+++++++++++")
+   
     if (!req.file || !req.file.buffer) {
       return res.status(400).json({ success: false, message: "No file provided" });
     }
