@@ -12,14 +12,15 @@ const getUser = async (id) => {
 
         const Chat = {};
         const ContactData = {};
-
+        const allUsers=[];
         await Promise.all(user.contacts.map(async (conversationId) => {
-            const [messages, conversation, group] = await Promise.all([
+            const [messages, conversation, group,allUser] = await Promise.all([
                 Message.find({ conversationId }),
                 Conversation.findById(conversationId),
-                Group.findOne({ conversationId })
+                Group.findOne({ conversationId }),
+                User.find().select('-password')
             ]);
-
+           allUsers=allUser;
             Chat[conversationId] = { Message: messages, Conversation: conversation, Group: group };
 
             for (const participant of conversation.participants) {
@@ -29,7 +30,7 @@ const getUser = async (id) => {
                 }
             }
         }));
-        return { status: 200, success: true, User: user, Chat, ContactData };
+        return { status: 200, success: true, User: user, Chat, ContactData,allUsers };
     } catch (error) {
         console.log("Error fetching user data:", error);
         return { status: 500, success: false, message: "Server error" };
