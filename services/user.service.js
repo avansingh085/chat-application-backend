@@ -12,7 +12,7 @@ const getUser = async (id) => {
 
         const Chat = {};
         const ContactData = {};
-        const allUsers=[];
+        let allUsers=[];
         await Promise.all(user.contacts.map(async (conversationId) => {
             const [messages, conversation, group,allUser] = await Promise.all([
                 Message.find({ conversationId }),
