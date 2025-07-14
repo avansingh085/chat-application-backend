@@ -4,6 +4,17 @@ const cors=require('cors');
 const fs=require('fs');
 const ConnectionDB = require('./config/connectionDB.config');
 const socketHandler = require('./socket/socketServer');
+
+
+app.use(cors({
+  origin: ["https://www.avansingh.in", "https://chat-application-henna-iota.vercel.app"],
+  credentials: true,
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+}));
+
+app.options('*', cors());
+
+
 const PORT = 3001;
 const options = {
     key: fs.readFileSync("./cert/server-key.pem"),

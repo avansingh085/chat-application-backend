@@ -14,12 +14,6 @@ const userRoutes=require('./routes/user.route');
  const groupLinkRoutes=require('./routes/group.route');
 const app = express();
 
-app.use(
-  cors({
-    origin: ["https://www.avansingh.in", "https://chat-application-henna-iota.vercel.app"],
-    credentials: true, // if you need to allow cookies
-  })
-);
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
