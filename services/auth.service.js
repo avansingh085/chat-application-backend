@@ -15,6 +15,7 @@ const loginUser = async (email, password) => {
     return { user, token };
 };
 
+
 const signUpUser = async ({ userId, email, password }) => {
     if (!userId || !email || !password) throw { status: 400, message: "All input is required" };
 

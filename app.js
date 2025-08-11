@@ -19,7 +19,8 @@ app.use(express.urlencoded({ extended: true }));
 app.use(cors({
   origin:[
       'https://chat-application-henna-iota.vercel.app',
-      'https://www.avansingh.in'
+      'https://www.avansingh.in',
+      'http://localhost:5173'
     ],
   credentials: true
 }));

@@ -14,16 +14,19 @@ const updateGroup=async (groupId,data)=>{
     return {data:group,error:null};
 
 }
-const addNewMember=async ({userId,conversationId})=>{
+const addNewMember=async ({userId,conversationId,newUser})=>{
 
  const conversation = await Conversation.findById(conversationId);
     if (!conversation) throw new Error('Conversation not found');
 
-    const user = await User.findById(userId);
+    const user = await User.findOne({userId:newUser});
+    
     if (!user) throw new Error('User not found');
-
+  
     if (!conversation.participants.includes(user._id)) {
         conversation.participants.push(user._id);
+        user.contacts.push(conversationId);
+        await user.save();
         await conversation.save();
     }
     return {data:{},error:null};

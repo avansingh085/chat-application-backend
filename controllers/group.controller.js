@@ -4,7 +4,8 @@ const groupService = require('../services/group.service');
 
 const addNewMember = async (req, res) => {
     try {
-        const { data, error } = await groupService.addNewMember({ userId: req.user?.id, conversationId: req.params.conversationId });
+       
+        const { data, error } = await groupService.addNewMember({ userId: req.user.id,newUser:req.body?.newUser, conversationId: req.params.conversationId });
         if (!error)
             return res.status(200).send({ success: true, message: "new member successfully added" });
         return res.status(500).send({ success: false, message: "failed to add member ", error })
