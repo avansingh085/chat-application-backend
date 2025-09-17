@@ -5,21 +5,35 @@ const Message = require("../models/message.model");
 
 const createConversation = async ({ participants, type, groupName }) => {
     try {
-        if (!participants || !type) return { status: 400, success: false, message: "Participants and type required" };
-        if (type === "group" && !groupName) return { status: 400, success: false, message: "Group name is required" };
+        if (!participants || !type) {
+            return { status: 400, success: false, message: "Participants and type required" };
+        }
 
+        if (type === "group" && !groupName) {
+            return { status: 400, success: false, message: "Group name is required" };
+        }
+
+        // Create conversation
         const conversation = await Conversation.create({ participants, type });
 
-        await Promise.all(participants.map(async participant => {
-            const user = await User.findOne({ userId: participant });
-            if (user) {
-                user.contacts.push(conversation._id);
-                await user.save();
-            }
-        }));
+        // Update each participant's contacts safely
+        await Promise.all(
+            participants.map(async (participant) => {
+                await User.updateOne(
+                    { userId: participant },
+                    { $addToSet: { contacts: conversation._id } }
+                );
+            })
+        );
 
+        // If group, create metadata with unique admins
         if (type === "group") {
-            await Group.create({ conversationId: conversation._id, groupName, adminIds: participants });
+            const uniqueAdmins = [...new Set(participants)];
+            await Group.create({
+                conversationId: conversation._id,
+                groupName,
+                adminIds: uniqueAdmins,
+            });
         }
 
         return { status: 200, success: true, conversation };
@@ -30,6 +44,7 @@ const createConversation = async ({ participants, type, groupName }) => {
 };
 
 const createGroup = async ({ adminIds, groupName, ConversationId, groupPicture }) => {
+
     if (!adminIds || !groupName || !ConversationId || !groupPicture) {
         return { status: 400, success: false, message: "All fields are required" };
     }

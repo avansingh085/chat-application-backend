@@ -9,6 +9,6 @@ const UserSchema = new mongoose.Schema({
   profilePicture: { type: String, default: "" },
   lastSeen: { type: Date, default: Date.now },
   status: { type: String, default: "Hey there! I'm using ChatsApp" },
-  contacts: [{ type: String, ref: "User" }],
+  contacts: [{ type: String, ref: "Conversation" }],
 });
 module.exports = mongoose.model("User", UserSchema);

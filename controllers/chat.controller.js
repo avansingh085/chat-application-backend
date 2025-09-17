@@ -6,6 +6,7 @@ const createConversation = async (req, res) => {
 };
 
 const createGroup = async (req, res) => {
+    
     const response = await chatService.createGroup(req.body);
     return res.status(response.status).json(response);
 };

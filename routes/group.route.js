@@ -6,11 +6,15 @@ const router = express.Router();
 
 router.use(checkToken)
 
-// Generate join link
+///api/generate/68ca50a3040d3b547a4ddea2
 router.get('/generate/:conversationId', groupController.genrateLink);
 
-// Join group using link
 router.post('/:groupJoinId/:conversationId/joinLink', groupController.joinGroupUsingLink);
- router.put('/',groupController.updateGroup);
- router.post('/add/:conversationId',groupController.addNewMember);
+
+// Add new member
+router.post('/add/:conversationId', groupController.addNewMember);
+
+// Update group (generic)
+router.put('/', groupController.updateGroup);
+
 module.exports = router;

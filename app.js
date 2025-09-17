@@ -13,7 +13,7 @@ const userRoutes=require('./routes/user.route');
  const uploadRoutes=require('./routes/upload.route');
  const groupLinkRoutes=require('./routes/group.route');
 const app = express();
-
+//http://localhost:3001/group/b928fd32-ce68-4646-9942-5e1b69ac8884/68ca50a3040d3b547a4ddea2/joinLink
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cors({

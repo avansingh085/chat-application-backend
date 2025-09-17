@@ -30,6 +30,7 @@ const updateGroup = async (req, res) => {
 const genrateLink = async (req, res) => {
     try {
         const { conversationId } = req.params;
+        console.log(conversationId)
         if (!conversationId) {
             return res.status(400).json({ success: false, message: 'Conversation ID is required' });
         }
@@ -44,15 +45,18 @@ const genrateLink = async (req, res) => {
 
 const joinGroupUsingLink = async (req, res) => {
     try {
+        
         const { groupJoinId, conversationId } = req.params;
+        console.log(req.params)
         const { id: userId } = req.body;
+        console.log(req.body)
 
         if (!groupJoinId || !conversationId || !userId) {
             return res.status(400).json({ success: false, message: 'All fields are required' });
         }
-
+   
         await groupService.joinGroupUsingLink(groupJoinId, conversationId, userId);
-        //    return res.redirect('https://y.com/c');
+       
         return res.status(200).json({ success: true, message: 'User added to group successfully' });
     } catch (err) {
         console.error('Error joining group:', err.message);
