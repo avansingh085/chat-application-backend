@@ -43,8 +43,6 @@ const generateJoinLink = async (conversationId) => {
 
     const groupJoinId = uuidv4();
     UidMapWithConversation[conversationId] = groupJoinId;
-
-    // Set timeout to delete after 10 hours
     setTimeout(() => {
         delete UidMapWithConversation[conversationId];
     }, 10 * 60 * 60 * 1000);
@@ -54,21 +52,24 @@ const generateJoinLink = async (conversationId) => {
 };
 
 const joinGroupUsingLink = async (groupJoinId, conversationId, userId) => {
+    console.log(groupJoinId,conversationId,userId,"step-1")
     if (!UidMapWithConversation[conversationId] || UidMapWithConversation[conversationId] !== groupJoinId) {
         throw new Error('Invalid groupJoinId');
     }
+    console.log(groupJoinId,conversationId,userId,"step-2")
 
 
     const conversation = await Conversation.findById(conversationId);
     if (!conversation) throw new Error('Conversation not found');
-
+  
     const user = await User.findOne({ userId });
+    console.log(user,conversation)
 
     if (!user) throw new Error('User not found');
 
-    if (!conversation.participants.includes(user._id)) {
-        conversation.participants.push(user._id);
-        
+    if (!conversation.participants.includes(user.userId)) {
+        conversation.participants.push(user.userId);
+       // console.log(first)
          const oneYearLater = new Date(Date.now() + 365 * 24 * 60 * 60 * 1000);
         await groupAutoDelete.create({conversationId:conversation._id,userId:user._id,date:oneYearLater})
         await conversation.save();

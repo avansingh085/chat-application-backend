@@ -13,7 +13,6 @@ const createConversation = async ({ participants, type, groupName }) => {
             return { status: 400, success: false, message: "Group name is required" };
         }
 
-        // Create conversation
         const conversation = await Conversation.create({ participants, type });
 
         // Update each participant's contacts safely
@@ -48,7 +47,7 @@ const createGroup = async ({ adminIds, groupName, ConversationId, groupPicture }
     if (!adminIds || !groupName || !ConversationId || !groupPicture) {
         return { status: 400, success: false, message: "All fields are required" };
     }
-    
+
 
     try {
         const group = await Group.create({ adminIds, groupName, conversationId: ConversationId, groupPicture });
