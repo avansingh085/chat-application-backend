@@ -21,7 +21,6 @@ const signUpUser = async ({ userId, email, password }) => {
 
     const existingUser = await User.findOne({ email });
     if (existingUser) throw { status: 400, message: "User already exists" };
-
     const hashedPassword = await bcrypt.hash(password, 10);
     const newUser = await User.create({ userId, email, password: hashedPassword });
 

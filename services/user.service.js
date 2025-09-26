@@ -1,7 +1,7 @@
-const User = require("../models/user.model");
-const Conversation = require("../models/conversation.model");
-const Message = require("../models/message.model");
-const Group = require("../models/groupMetadata.model");
+const User = require("../models/user.model.js");
+const Conversation = require("../models/conversation.model.js");
+const Message = require("../models/message.model.js");
+const Group = require("../models/groupMetadata.model.js");
 
 const getUser = async (id) => {
     if (!id) return { status: 400, success: false, message: "Id is required" };

@@ -26,7 +26,7 @@ const logout = (req, res) => {
     try {
         const token = req.headers.authorization;
         if (!token) return res.status(400).json({ message: "Token is required" });
-        destroyToken(token); // No-op or token blacklist logic
+        destroyToken(token); 
         res.status(200).json({ message: "Logged out successfully" });
     } catch (err) {
         res.status(500).json({ message: "Logout failed" });

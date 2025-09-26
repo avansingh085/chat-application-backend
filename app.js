@@ -2,7 +2,7 @@ const express = require('express');
 const session = require('express-session');
 const passport = require('passport');
 const cors = require('cors');
-
+const startAutoDeleteJob=require('./jobs/autoDelete.job.js');
 require('dotenv').config();
 
 const authsRoutes = require('./routes/google.auth.route');
@@ -10,10 +10,12 @@ require('./auth/google.auth');
 const chatRoutes=require('./routes/chat.route');
 const authRoutes=require('./routes/auth.route');
 const userRoutes=require('./routes/user.route');
- const uploadRoutes=require('./routes/upload.route');
- const groupLinkRoutes=require('./routes/group.route');
+const uploadRoutes=require('./routes/upload.route');
+const groupLinkRoutes=require('./routes/group.route');
+const groupAutoDelete=require('./routes/groupAutoDelete.route.js');
 const app = express();
-//http://localhost:3001/group/b928fd32-ce68-4646-9942-5e1b69ac8884/68ca50a3040d3b547a4ddea2/joinLink
+startAutoDeleteJob();
+
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cors({
@@ -30,6 +32,9 @@ app.use('/api/user',userRoutes);
 app.use('/api/chat',chatRoutes);
 app.use('/api/upload',uploadRoutes)
 app.use('/api/group',groupLinkRoutes);
+app.use('/api/group-auto-delete',groupAutoDelete);
+
+
 app.use(session({
   secret: "mySuperSecretKey123",
   resave: false,

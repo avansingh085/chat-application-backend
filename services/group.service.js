@@ -1,7 +1,7 @@
 const { v4: uuidv4 } = require('uuid');
 const Conversation = require('../models/conversation.model');
 const User = require('../models/user.model');
-
+const groupAutoDelete=require('../models/groupAutoDelete.model.js');
 const UidMapWithConversation = require('../utils/uidMap');
 const groupMetadataModel = require('../models/groupMetadata.model');
 const updateGroup = async (groupId, data) => {
@@ -21,7 +21,11 @@ const addNewMember = async ({ userId, conversationId, newUser }) => {
 
     const user = await User.findOne({ userId: newUser });
 
+    
     if (!user) throw new Error('User not found');
+
+    const oneYearLater = new Date(Date.now() + 365 * 24 * 60 * 60 * 1000);
+    await groupAutoDelete.create({conversationId:conversation._id,userId:user._id,date:oneYearLater})
 
     if (!conversation.participants.includes(user._id)) {
         conversation.participants.push(user._id);
@@ -64,6 +68,9 @@ const joinGroupUsingLink = async (groupJoinId, conversationId, userId) => {
 
     if (!conversation.participants.includes(user._id)) {
         conversation.participants.push(user._id);
+        
+         const oneYearLater = new Date(Date.now() + 365 * 24 * 60 * 60 * 1000);
+        await groupAutoDelete.create({conversationId:conversation._id,userId:user._id,date:oneYearLater})
         await conversation.save();
         await User.updateOne(
             { userId: user.userId },
