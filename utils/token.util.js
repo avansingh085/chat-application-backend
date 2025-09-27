@@ -8,7 +8,7 @@ const verifyToken = (token) => {
 };
 
 const destroyToken = () => {
-    return null; // Optional: blacklist logic
+    return null; 
 };
 
 module.exports = { verifyToken, destroyToken };

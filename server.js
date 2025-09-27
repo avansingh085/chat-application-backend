@@ -5,23 +5,6 @@ const fs=require('fs');
 const ConnectionDB = require('./config/connectionDB.config');
 const socketHandler = require('./socket/socketServer');
 const {BASE_SSL_CERT_PATH}=require('./config/server.config.js');
-// app.use(cors({
-//   origin: function (origin, callback) {
-   
-//     const allowed = [
-//       'https://www.avansingh.in',
-//       'https://chat-application-henna-iota.vercel.app'
-//     ];
-//     if (!origin || allowed.indexOf(origin) !== -1) {
-//       callback(null, true);
-//     } else {
-//       callback(new Error('Not allowed by CORS'));
-//     }
-//   },
-//   credentials: true,
-// }));
-
-
 
 const PORT = 3001;
 const options = {
