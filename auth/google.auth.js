@@ -11,11 +11,11 @@ passport.use(new GoogleStrategy({
   return done(null, profile);
 }));
 
-// passport.serializeUser((user, done) => {
-//   done(null, user); // Save the whole profile in session
-// });
+passport.serializeUser((user, done) => {
+  done(null, user); // Save the whole profile in session
+});
 
-// passport.deserializeUser((obj, done) => {
-//   done(null, obj);
-// });
+passport.deserializeUser((obj, done) => {
+  done(null, obj);
+});
 
