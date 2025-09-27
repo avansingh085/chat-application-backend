@@ -42,7 +42,7 @@ app.use('/api/group-auto-delete',groupAutoDelete);
 // }));
 
 // Passport Middleware
-app.use(passport.initialize());
+//app.use(passport.initialize());
 //app.use(passport.session());
 
 // Routes
