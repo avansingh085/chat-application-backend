@@ -15,6 +15,7 @@ pnpm-debug.log*
 # Build output (if using Babel/TypeScript or custom build)
 dist/
 build/
+cert/
 
 # OS-specific files
 .DS_Store

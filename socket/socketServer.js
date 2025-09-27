@@ -6,7 +6,9 @@ const Users = {};
 const Notifications = {};
 
 const socketHandler = (server) => {
+
   console.log("Socket server started");
+  
   try {
     const io = new Server(server, {
       cors: { origin: "*" }

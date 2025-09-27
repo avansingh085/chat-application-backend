@@ -4,7 +4,7 @@ const passport = require('passport');
 const cors = require('cors');
 const startAutoDeleteJob=require('./jobs/autoDelete.job.js');
 require('dotenv').config();
-
+const {SESSION_SECRET} =require('./config/server.config.js');
 const authsRoutes = require('./routes/google.auth.route');
 require('./auth/google.auth');
 const chatRoutes=require('./routes/chat.route');
@@ -36,7 +36,7 @@ app.use('/api/group-auto-delete',groupAutoDelete);
 
 
 app.use(session({
-  secret: "mySuperSecretKey123",
+  secret: SESSION_SECRET,
   resave: false,
   saveUninitialized: false
 }));

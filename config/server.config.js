@@ -16,4 +16,9 @@ module.exports= {
     REDIS_PASS,
     GOOGLE_CLIENT_ID,
     GOOGLE_CLIENT_SECRET,
+    SESSION_SECRET,
+    SSL_KEY,
+    SSL_CERT,
+    BASE_SSL_CERT_PATH
+
 } = process.env;

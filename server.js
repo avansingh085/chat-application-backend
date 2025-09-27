@@ -4,7 +4,7 @@ const cors=require('cors');
 const fs=require('fs');
 const ConnectionDB = require('./config/connectionDB.config');
 const socketHandler = require('./socket/socketServer');
-
+const {BASE_SSL_CERT_PATH}=require('./config/server.config.js');
 // app.use(cors({
 //   origin: function (origin, callback) {
    
@@ -25,8 +25,8 @@ const socketHandler = require('./socket/socketServer');
 
 const PORT = 3001;
 const options = {
-    key: fs.readFileSync("./cert/server-key.pem"),
-    cert: fs.readFileSync("./cert/server-cert.pem"),
+    key: fs.readFileSync(`${BASE_SSL_CERT_PATH}/server-key.pem`),
+    cert: fs.readFileSync(`${BASE_SSL_CERT_PATH}/server-cert.pem`),
 };
 ConnectionDB();
 const server = http.createServer(options,app);
