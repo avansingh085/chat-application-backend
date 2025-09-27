@@ -1,5 +1,5 @@
 const express = require('express');
-const session = require('express-session');
+//const session = require('express-session');
 const passport = require('passport');
 const cors = require('cors');
 const startAutoDeleteJob=require('./jobs/autoDelete.job.js');
@@ -35,15 +35,15 @@ app.use('/api/group',groupLinkRoutes);
 app.use('/api/group-auto-delete',groupAutoDelete);
 
 
-app.use(session({
-  secret: SESSION_SECRET,
-  resave: false,
-  saveUninitialized: false
-}));
+// app.use(session({
+//   secret: SESSION_SECRET,
+//   resave: false,
+//   saveUninitialized: false
+// }));
 
 // Passport Middleware
 app.use(passport.initialize());
-app.use(passport.session());
+//app.use(passport.session());
 
 // Routes
 app.use('/auth', authsRoutes);

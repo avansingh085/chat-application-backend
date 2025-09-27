@@ -7,15 +7,15 @@ passport.use(new GoogleStrategy({
   clientSecret: process.env.GOOGLE_CLIENT_SECRET,
   callbackURL: process.env.GOOGLE_CALLBACK
 }, (accessToken, refreshToken, profile, done) => {
- console.log(profile)
+ 
   return done(null, profile);
 }));
 
-passport.serializeUser((user, done) => {
-  done(null, user); // Save the whole profile in session
-});
+// passport.serializeUser((user, done) => {
+//   done(null, user); // Save the whole profile in session
+// });
 
-passport.deserializeUser((obj, done) => {
-  done(null, obj);
-});
+// passport.deserializeUser((obj, done) => {
+//   done(null, obj);
+// });
 
