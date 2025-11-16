@@ -74,7 +74,9 @@ const socketHandler = (server) => {
           console.log(participants,roomId,userName)
 
           for (const participant of participants) {
+            console.log(Users[participant],participant,userName);
             if (Users[participant]?.isOnline && participant !== userName) {
+              console.log('emitting to', Users[participant].socketId,participant);
               io.to(Users[participant].socketId).emit("offer-video-call", { roomId, userName });
 
             }
