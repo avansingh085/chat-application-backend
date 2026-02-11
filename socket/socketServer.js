@@ -1,116 +1,127 @@
 const { Server } = require("socket.io");
-const Conversation = require('../models/conversation.model');
-const Message = require('../models/message.model');
-
-const Users = {};
-const Notifications = {};
+const Conversation = require('../models/conversation.model.js');
+const Message = require('../models/message.model.js');
+const {redis} = require('../config/redis.config.js');
 
 const socketHandler = (server) => {
-
   console.log("Socket server started");
-  
+
   try {
     const io = new Server(server, {
       cors: { origin: "*" }
     });
 
-    io.on("connection", (socket) => {
+    io.on("connection", async (socket) => {
       console.log("New client connected", socket.id);
       const userId = socket.handshake.query.userId;
-      Users[userId] = { isOnline: true, socketId: socket.id };
 
-      socket.on("deleteNotification", (notificationKey) => {
-        Notifications[notificationKey] = { count: 0 };
+      if (userId) {
+        await redis.set(`Users-${userId}`, JSON.stringify({ isOnline: true, socketId: socket.id }));
+      }
+
+      socket.on("deleteNotification", async (notificationKey) => {
+        await redis.set(`Notifications-${notificationKey}`, JSON.stringify({ count: 0 }));
         socket.emit("notification", {
           count: 0,
           notificationKey
         });
       });
 
-      socket.on("notification", (notificationKey) => {
+      socket.on("notification", async (notificationKey) => {
+        const rawData = await redis.get(`Notifications-${notificationKey}`);
+        const data = rawData ? JSON.parse(rawData) : { count: 0 };
         socket.emit("notification", {
-          count: Notifications[notificationKey]?.count || 0,
+          count: data.count,
           notificationKey
         });
       });
 
-      socket.on("disconnect", () => {
-        if (Users[userId]) {
-          Users[userId].isOnline = false;
-          Users[userId].socketId = null;
+      socket.on("disconnect", async () => {
+        if (userId) {
+          await redis.set(`Users-${userId}`, JSON.stringify({ isOnline: false, socketId: null }));
         }
       });
 
       socket.on("message", async (mes) => {
-        let conversation = await Conversation.findById(mes.conversationId);
-        let participants = conversation.participants;
+        try {
+          let conversation = await Conversation.findById(mes.conversationId);
+          let participants = conversation.participants;
 
-        for (const participant of participants) {
-          const notificationKey = `${participant}-${mes.conversationId}`;
-          if (participant !== mes.sender) {
-            Notifications[notificationKey] = {
-              count: (Notifications[notificationKey]?.count || 0) + 1
-            };
+          for (const participant of participants) {
+            const notificationKey = `${participant}-${mes.conversationId}`;
+
+            if (participant !== mes.sender) {
+              let currentNotifRaw = await redis.get(`Notifications-${notificationKey}`);
+              let currentNotif = currentNotifRaw ? JSON.parse(currentNotifRaw) : { count: 0 };
+              
+              const newCount = (currentNotif.count || 0) + 1;
+              
+              await redis.set(`Notifications-${notificationKey}`, JSON.stringify({ count: newCount }));
+
+              let participantDataRaw = await redis.get(`Users-${participant}`);
+              if (participantDataRaw) {
+                const participantData = JSON.parse(participantDataRaw);
+
+                if (participantData.isOnline && participantData.socketId) {
+                  io.to(participantData.socketId).emit("message", mes);
+                  io.to(participantData.socketId).emit("notification", {
+                    count: newCount,
+                    notificationKey
+                  });
+                }
+              }
+            }
           }
 
-          if (Users[participant]?.isOnline && participant !== mes.sender) {
-            io.to(Users[participant].socketId).emit("message", mes);
-            io.to(Users[participant].socketId).emit("notification", {
-              count: Notifications[notificationKey].count,
-              notificationKey
-            });
-          }
+          const newMessage = new Message(mes);
+          await newMessage.save();
+        } catch (err) {
+          console.log("Error in message handler:", err);
         }
-
-        const newMessage = new Message(mes);
-        await newMessage.save();
       });
 
       socket.on("offer-video-call", async ({ roomId, userName }) => {
         try {
           let conversation = await Conversation.findById(roomId);
-          console.log('offer-video-call');
           let participants = conversation.participants;
-          console.log(participants,roomId,userName)
 
           for (const participant of participants) {
-            console.log(Users[participant],participant,userName);
-            if (Users[participant]?.isOnline && participant !== userName) {
-              console.log('emitting to', Users[participant].socketId,participant);
-              io.to(Users[participant].socketId).emit("offer-video-call", { roomId, userName });
-
+            let participantDataRaw = await redis.get(`Users-${participant}`);
+            
+            if (participantDataRaw) {
+              const participantData = JSON.parse(participantDataRaw);
+              
+              if (participantData.isOnline && participant !== userName && participantData.socketId) {
+                io.to(participantData.socketId).emit("offer-video-call", { roomId, userName });
+              }
             }
           }
         } catch (err) {
           console.log("error during offer-video-call websocket", err);
         }
-
-
       });
-
-
 
       socket.on("end-video-call", async ({ roomId, userName }) => {
-        try{
-        let conversation = await Conversation.findById(roomId);
-        console.log('end-video-call');
-        let participants = conversation.participants;
+        try {
+          let conversation = await Conversation.findById(roomId);
+          let participants = conversation.participants;
 
-        console.log(participants);
-        for (const participant of participants) {
-          if (Users[participant]?.isOnline) {
+          for (const participant of participants) {
+            let participantDataRaw = await redis.get(`Users-${participant}`);
 
-            io.to(Users[participant].socketId).emit("end-video-call", { roomId, userName });
-
+            if (participantDataRaw) {
+               const participantData = JSON.parse(participantDataRaw);
+               
+               if (participantData.isOnline && participantData.socketId) {
+                 io.to(participantData.socketId).emit("end-video-call", { roomId, userName });
+               }
+            }
           }
+        } catch (err) {
+          console.log('error during end-video-call', err);
         }
-      }catch(err){
-        console.log('error during end-video-call',err);
-      }
       });
     });
-
-
 
   } catch (error) {
     console.log("Socket server error:", error);

@@ -1,19 +1,19 @@
-// redis-client.js
-const { REDIS_PASS, REDIS_ENDPOINT, REDIS_PORT }  =require('./server-config.js');
-const Redis=require('ioredis');
+const { REDIS_PASS } = require('./server.config.js');
+const { createClient } = require('redis');
+let redis = null;
+const connectRedis = async () => {
+  redis = createClient({
+    username: 'default',
+    password: REDIS_PASS,
+    socket: {
+      host: 'redis-13498.c82.us-east-1-2.ec2.cloud.redislabs.com',
+      port: 13498
+    }
+  });
 
-const REDIS_URL = `rediss://default:${REDIS_PASS}@${REDIS_ENDPOINT}:${REDIS_PORT}`;
+  redis.on('error', err => console.log('Redis Client Error', err));
 
-const redis = new Redis(REDIS_URL, {
-  tls: { rejectUnauthorized: false }
-});
+  await redis.connect();
+}
 
-redis.on('connect', () => {
-  console.log(' Redis connected');
-});
-
-redis.on('error', (err) => {
-  console.error(' Redis error:', err);
-});
-
-module.exports= redis;
+module.exports = { redis, connectRedis };
