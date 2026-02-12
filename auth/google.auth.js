@@ -12,7 +12,7 @@ passport.use(new GoogleStrategy({
 }));
 
 passport.serializeUser((user, done) => {
-  done(null, user); // Save the whole profile in session
+  done(null, user); 
 });
 
 passport.deserializeUser((obj, done) => {
