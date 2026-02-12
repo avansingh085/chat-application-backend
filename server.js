@@ -19,11 +19,12 @@ connectRedis();
 const server = http.createServer(options,app);
 setTimeout(()=>{
 socketHandler(server);
-},5000)
-
 server.listen(PORT, '0.0.0.0',  () => {
   console.log(`Server is running on http://0.0.0.0:${PORT}`);
 });
+},10000)
+
+
 
 // server.listen(PORT, () => {
 //   console.log(`Server is running on http://localhost:${PORT}`);
