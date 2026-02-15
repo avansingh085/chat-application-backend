@@ -1,32 +1,33 @@
 const { Server } = require("socket.io");
 const Conversation = require('../models/conversation.model.js');
 const Message = require('../models/message.model.js');
-const redis  = require('../config/redis.config.js');
+const { safeRedisGet, safeRedisSet } = require('../config/redis.config.js');
 
 const socketHandler = (server) => {
   console.log("Socket server started");
 
   try {
-   const io = new Server(server, {
-  cors: {
-    origin: [
-      "http://localhost:5173",
-      "https://chat-application-henna-iota.vercel.app",
-      "https://avansingh.in"
-    ],
-    credentials: true
-  }
-});
+    const io = new Server(server, {
+      cors: {
+        origin: [
+          "http://localhost:5173",
+          "https://chat-application-henna-iota.vercel.app",
+          "https://avansingh.in"
+        ],
+        credentials: true
+      }
+    });
+
     io.on("connection", async (socket) => {
       console.log("New client connected", socket.id);
       const userId = socket.handshake.query.userId;
 
-      if (userId && redis) {
-        await redis.set(`Users-${userId}`, JSON.stringify({ isOnline: true, socketId: socket.id }));
+      if (userId) {
+        await safeRedisSet(`Users-${userId}`, JSON.stringify({ isOnline: true, socketId: socket.id }));
       }
 
       socket.on("deleteNotification", async (notificationKey) => {
-        await redis.set(`Notifications-${notificationKey}`, JSON.stringify({ count: 0 }));
+        await safeRedisSet(`Notifications-${notificationKey}`, JSON.stringify({ count: 0 }));
         socket.emit("notification", {
           count: 0,
           notificationKey
@@ -34,8 +35,8 @@ const socketHandler = (server) => {
       });
 
       socket.on("notification", async (notificationKey) => {
-        const rawData = await redis.get(`Notifications-${notificationKey}`);
-        const data = rawData ? JSON.parse(rawData) : { count: 0 };
+        const rawData = await safeRedisGet(`Notifications-${notificationKey}`);
+        const data = rawData ? (typeof rawData === 'string' ? JSON.parse(rawData) : rawData) : { count: 0 };
         socket.emit("notification", {
           count: data.count,
           notificationKey
@@ -43,30 +44,32 @@ const socketHandler = (server) => {
       });
 
       socket.on("disconnect", async () => {
-        if (userId && redis) {
-          await redis.set(`Users-${userId}`, JSON.stringify({ isOnline: false, socketId: null }));
+        if (userId) {
+          await safeRedisSet(`Users-${userId}`, JSON.stringify({ isOnline: false, socketId: null }));
         }
       });
 
       socket.on("message", async (mes) => {
         try {
           let conversation = await Conversation.findById(mes.conversationId);
+          if (!conversation) return;
+          
           let participants = conversation.participants;
 
           for (const participant of participants) {
             const notificationKey = `${participant}-${mes.conversationId}`;
 
             if (participant !== mes.sender) {
-              let currentNotifRaw = await redis.get(`Notifications-${notificationKey}`);
-              let currentNotif = currentNotifRaw ? JSON.parse(currentNotifRaw) : { count: 0 };
+              let currentNotifRaw = await safeRedisGet(`Notifications-${notificationKey}`);
+              let currentNotif = currentNotifRaw ? (typeof currentNotifRaw === 'string' ? JSON.parse(currentNotifRaw) : currentNotifRaw) : { count: 0 };
 
               const newCount = (currentNotif.count || 0) + 1;
-           
-              await redis.set(`Notifications-${notificationKey}`, JSON.stringify({ count: newCount }));
+            
+              await safeRedisSet(`Notifications-${notificationKey}`, JSON.stringify({ count: newCount }));
 
-              let participantDataRaw = await redis.get(`Users-${participant}`);
+              let participantDataRaw = await safeRedisGet(`Users-${participant}`);
               if (participantDataRaw) {
-                const participantData = JSON.parse(participantDataRaw);
+                const participantData = typeof participantDataRaw === 'string' ? JSON.parse(participantDataRaw) : participantDataRaw;
 
                 if (participantData.isOnline && participantData.socketId) {
                   io.to(participantData.socketId).emit("message", mes);
@@ -89,13 +92,15 @@ const socketHandler = (server) => {
       socket.on("offer-video-call", async ({ roomId, userName }) => {
         try {
           let conversation = await Conversation.findById(roomId);
+          if (!conversation) return;
+
           let participants = conversation.participants;
 
           for (const participant of participants) {
-            let participantDataRaw = await redis.get(`Users-${participant}`);
+            let participantDataRaw = await safeRedisGet(`Users-${participant}`);
 
             if (participantDataRaw) {
-              const participantData = JSON.parse(participantDataRaw);
+              const participantData = typeof participantDataRaw === 'string' ? JSON.parse(participantDataRaw) : participantDataRaw;
 
               if (participantData.isOnline && participant !== userName && participantData.socketId) {
                 io.to(participantData.socketId).emit("offer-video-call", { roomId, userName });
@@ -110,13 +115,15 @@ const socketHandler = (server) => {
       socket.on("end-video-call", async ({ roomId, userName }) => {
         try {
           let conversation = await Conversation.findById(roomId);
+          if (!conversation) return;
+
           let participants = conversation.participants;
 
           for (const participant of participants) {
-            let participantDataRaw = await redis.get(`Users-${participant}`);
+            let participantDataRaw = await safeRedisGet(`Users-${participant}`);
 
             if (participantDataRaw) {
-              const participantData = JSON.parse(participantDataRaw);
+              const participantData = typeof participantDataRaw === 'string' ? JSON.parse(participantDataRaw) : participantDataRaw;
 
               if (participantData.isOnline && participantData.socketId) {
                 io.to(participantData.socketId).emit("end-video-call", { roomId, userName });
