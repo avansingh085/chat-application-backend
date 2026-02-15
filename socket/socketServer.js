@@ -1,7 +1,7 @@
 const { Server } = require("socket.io");
 const Conversation = require('../models/conversation.model.js');
 const Message = require('../models/message.model.js');
-const { redis } = require('../config/redis.config.js');
+const redis  = require('../config/redis.config.js');
 
 const socketHandler = (server) => {
   console.log("Socket server started");

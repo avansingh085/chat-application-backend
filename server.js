@@ -5,7 +5,6 @@ const fs=require('fs');
 const ConnectionDB = require('./config/connectionDB.config');
 const socketHandler = require('./socket/socketServer');
 const {BASE_SSL_CERT_PATH}=require('./config/server.config.js');
-const {connectRedis}=require('./config/redis.config.js')
 
 
 const PORT = 3001;
@@ -15,7 +14,7 @@ const options = {
     cert: fs.readFileSync(`${BASE_SSL_CERT_PATH}/server-cert.pem`),
 };
 ConnectionDB();
-connectRedis();
+
 const server = http.createServer(options,app);
 
 socketHandler(server);
