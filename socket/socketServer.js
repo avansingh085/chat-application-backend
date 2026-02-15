@@ -7,10 +7,16 @@ const socketHandler = (server) => {
   console.log("Socket server started");
 
   try {
-    const io = new Server(server, {
-      cors: { origin: "*" }
-    });
-
+   const io = new Server(server, {
+  cors: {
+    origin: [
+      "http://localhost:5173",
+      "https://chat-application-henna-iota.vercel.app",
+      "https://avansingh.in"
+    ],
+    credentials: true
+  }
+});
     io.on("connection", async (socket) => {
       console.log("New client connected", socket.id);
       const userId = socket.handshake.query.userId;
