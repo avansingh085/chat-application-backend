@@ -5,6 +5,7 @@ const fs=require('fs');
 const ConnectionDB = require('./config/connectionDB.config');
 const socketHandler = require('./socket/socketServer');
 const {BASE_SSL_CERT_PATH}=require('./config/server.config.js');
+const startAutoDeleteJob=require('./jobs/autoDelete.job.js')
 
 
 const PORT = 3001;
@@ -14,6 +15,8 @@ const options = {
     cert: fs.readFileSync(`${BASE_SSL_CERT_PATH}/server-cert.pem`),
 };
 ConnectionDB();
+
+startAutoDeleteJob();
 
 const server = http.createServer(options,app);
 

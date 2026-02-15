@@ -30,12 +30,13 @@ const updateGroup = async (req, res) => {
 const genrateLink = async (req, res) => {
     try {
         const { conversationId } = req.params;
-        console.log(conversationId)
+       
         if (!conversationId) {
             return res.status(400).json({ success: false, message: 'Conversation ID is required' });
         }
 
         const joinLink = await groupService.generateJoinLink(conversationId);
+        
         return res.status(200).json({ success: true, joinLink });
     } catch (err) {
         console.error('Error generating link:', err.message);

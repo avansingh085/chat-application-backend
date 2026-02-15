@@ -9,6 +9,7 @@
   "keywords": [],
   "author": "",
   "license": "ISC",
+  "type": "commonjs",
   "dependencies": {
     "@upstash/redis": "^1.36.2",
     "bcrypt": "^5.1.1",

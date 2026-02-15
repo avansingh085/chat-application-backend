@@ -7,7 +7,7 @@ function startAutoDeleteJob() {
         try {
 
             const expiredDocs = await GroupAutoDeleteModel.find({ date: { $lte: now } });
-
+                console.log(expiredDocs)
             for (let doc of expiredDocs) {
                 await Conversation.findByIdAndUpdate(
                     doc.conversationId,
