@@ -47,9 +47,9 @@ const generateJoinLink = async (conversationId) => {
 
     const groupJoinId = uuidv4();
 
-    await JoinLink.deleteMany({ conversationId });
+    await joinLink.deleteMany({ conversationId });
 
-    await JoinLink.create({
+    await joinLink.create({
         conversationId,
         groupJoinId
     });
