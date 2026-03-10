@@ -2,6 +2,7 @@ const express = require('express');
 const session = require('express-session');
 const passport = require('passport');
 const cors = require('cors');
+const cookieParser = require('cookie-parser');
 const startAutoDeleteJob=require('./jobs/autoDelete.job.js');
 require('dotenv').config();
 const {SESSION_SECRET} =require('./config/server.config.js');
@@ -18,6 +19,7 @@ startAutoDeleteJob();
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+app.use(cookieParser());
 app.use(cors({
   origin:[
       'https://chat-application-henna-iota.vercel.app',

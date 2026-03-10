@@ -1,6 +1,6 @@
 const http = require('http');
 const app = require('./app');
-const cors=require('cors');
+
 const fs=require('fs');
 const ConnectionDB = require('./config/connectionDB.config');
 const socketHandler = require('./socket/socketServer');

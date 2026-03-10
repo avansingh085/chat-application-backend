@@ -2,15 +2,33 @@ const { loginUser, signUpUser } = require("../services/auth.service");
 const { verifyToken, destroyToken } = require("../utils/token.util");
 
 const login = async (req, res) => {
-    try {
-        const { email, password } = req.body;
-        const { user, token } = await loginUser(email, password);
-      
-        res.status(200).json({ success: true, id: user._id, token });
-    } catch (err) {
-       
-        res.status(err.status || 500).json({ success: false, message: err.message });
-    }
+  try {
+
+    const { email, password } = req.body;
+
+    const { user, token } = await loginUser(email, password);
+
+    res.cookie("ChatsToken", token, {
+      httpOnly: true,
+      secure: true,      
+      sameSite: "none",   
+      maxAge: 7 * 24 * 60 * 60 * 1000
+    });
+
+    res.status(200).json({
+      success: true,
+      id: user._id,
+      message: "Login successful"
+    });
+
+  } catch (err) {
+
+    res.status(err.status || 500).json({
+      success: false,
+      message: err.message
+    });
+
+  }
 };
 
 const signUp = async (req, res) => {
