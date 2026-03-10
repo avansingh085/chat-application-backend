@@ -1,5 +1,5 @@
 const { verifyToken} = require("../utils/token.util");
-  const socketVerifyToken=(socket, next) => {
+  const verifySocketAuth=(socket, next) => {
   const token = socket.handshake.auth.token;
 
   if (!token) {
@@ -14,4 +14,4 @@ const { verifyToken} = require("../utils/token.util");
     return next(new Error("Authentication error: Invalid token"));
   }
 }
-module.exports=socketVerifyToken;
+module.exports=verifySocketAuth;

@@ -2,7 +2,7 @@ const { Server } = require("socket.io");
 const Conversation = require('../models/conversation.model.js');
 const Message = require('../models/message.model.js');
 const { safeRedisGet, safeRedisSet } = require('../config/redis.config.js');
-
+const verifySocketAuth = require('../middlewares/verifySocketAuth.js');
 const socketHandler = (server) => {
   console.log("Socket server started");
 
@@ -17,6 +17,8 @@ const socketHandler = (server) => {
         credentials: true
       }
     });
+
+    io.use(verifySocketAuth);
 
     io.on("connection", async (socket) => {
       console.log("New client connected", socket.id);

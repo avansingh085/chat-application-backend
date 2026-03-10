@@ -38,18 +38,24 @@ const addNewMember = async ({ userId, conversationId, newUser }) => {
     return { data: {}, error: null };
 
 }
+
+
 const generateJoinLink = async (conversationId) => {
 
     const conversation = await Conversation.findById(conversationId);
-    if (!conversation) throw new Error('Conversation not found');
+    if (!conversation) throw new Error("Conversation not found");
 
     const groupJoinId = uuidv4();
-   
-    
 
-    const link = `http://localhost:3001/api/group/${groupJoinId}/${conversationId}/joinLink`;
-    await joinLink.deleteMany();
-    await joinLink.create({conversationId,groupJoinId});
+    await JoinLink.deleteMany({ conversationId });
+
+    await JoinLink.create({
+        conversationId,
+        groupJoinId
+    });
+
+    const link = `http://localhost:3001/api/group/join/${groupJoinId}`;
+
     return link;
 };
 
