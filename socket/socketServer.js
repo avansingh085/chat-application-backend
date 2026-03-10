@@ -18,11 +18,11 @@ const socketHandler = (server) => {
       }
     });
 
-    io.use(verifySocketAuth);
+    //io.use(verifySocketAuth);
 
     io.on("connection", async (socket) => {
       console.log("New client connected", socket.id);
-      const userId = socket.handshake.user.id;
+      const userId = socket.handshake.query.userId;
 
       if (userId) {
         await safeRedisSet(`Users-${userId}`, JSON.stringify({ isOnline: true, socketId: socket.id }));
