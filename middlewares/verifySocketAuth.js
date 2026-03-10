@@ -4,7 +4,7 @@ const { verifyToken } = require("../utils/token.util");
 const verifySocketAuth = (socket, next) => {
   try {
     const cookies = cookie.parse(socket.handshake.headers.cookie || "");
-    const token = cookies.token;
+    const token = cookies.ChatsToken;
 
     if (!token) return next(new Error("Unauthorized"));
 
