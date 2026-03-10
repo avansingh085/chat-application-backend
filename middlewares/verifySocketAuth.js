@@ -1,17 +1,20 @@
-const { verifyToken} = require("../utils/token.util");
-  const verifySocketAuth=(socket, next) => {
-  const token = socket.handshake.auth.token;
+const cookie = require("cookie");
+const { verifyToken } = require("../utils/token.util");
 
-  if (!token) {
-    return next(new Error("Authentication error: No token provided"));
-  }
-
+const verifySocketAuth = (socket, next) => {
   try {
+    const cookies = cookie.parse(socket.handshake.headers.cookie || "");
+    const token = cookies.token;
+
+    if (!token) return next(new Error("Unauthorized"));
+
     const decoded = verifyToken(token);
-    socket.user = decoded; 
+    socket.user = decoded;
+
     next();
   } catch (err) {
-    return next(new Error("Authentication error: Invalid token"));
+    next(new Error("Unauthorized"));
   }
-}
-module.exports=verifySocketAuth;
+};
+
+module.exports = verifySocketAuth;

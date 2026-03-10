@@ -22,7 +22,7 @@ const socketHandler = (server) => {
 
     io.on("connection", async (socket) => {
       console.log("New client connected", socket.id);
-      const userId = socket.handshake.query.userId;
+      const userId = socket.handshake.user.id;
 
       if (userId) {
         await safeRedisSet(`Users-${userId}`, JSON.stringify({ isOnline: true, socketId: socket.id }));
