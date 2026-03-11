@@ -1,26 +1,28 @@
-const mongoose=require('mongoose');
+const mongoose = require("mongoose");
 
-const joinLinkSchema=new mongoose.Schema({
-   conversationId: {
-      type: String,
+const joinLinkSchema = new mongoose.Schema(
+  {
+    conversationId: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Conversation",
       required: true,
-      index: true,
     },
 
-groupJoinId: {
-  type: String,
-  required: true,
-  unique: true,
-},
+    groupJoinId: {
+      type: String,
+      required: true,
+      unique: true,
+    },
 
-joinLinkExpiresAt: {
-  type: Date,
-  required: true,
-  default: () => new Date(Date.now() + 24 * 60 * 60 * 1000), 
-}
+    joinLinkExpiresAt: {
+      type: Date,
+      default: () => new Date(Date.now() + 24 * 60 * 60 * 1000),
+      index: { expires: 0 },
+    },
+  },
+  { timestamps: true }
+);
 
-})
+const JoinLink = mongoose.model("JoinLink", joinLinkSchema);
 
-const joinLink=mongoose.model('joinLink',joinLinkSchema);
-
-module.exports=joinLink;
+module.exports = JoinLink;
