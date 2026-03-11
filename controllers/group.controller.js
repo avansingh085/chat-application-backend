@@ -49,7 +49,7 @@ const joinGroupUsingLink = async (req, res) => {
         
         const { groupJoinId } = req.params;
         
-        const userId = req.user.id;
+        const userId = req.body.id;
       
         if (!groupJoinId  || !userId) {
             return res.status(400).json({ success: false, message: 'All fields are required' });
