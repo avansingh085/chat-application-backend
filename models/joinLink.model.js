@@ -3,7 +3,6 @@ const mongoose=require('mongoose');
 const joinLinkSchema=new mongoose.Schema({
    conversationId: {
       type: String,
-      unique: true,
       required: true,
       index: true,
     },
