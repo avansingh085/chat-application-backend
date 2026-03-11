@@ -1,7 +1,7 @@
 const express = require('express');
 const groupController = require('../controllers/group.controller');
 const { verifyToken } = require('../utils/token.util');
-const { checkToken } = require('../middlewares/verifyToken.js');
+const checkToken  = require('../middlewares/verifyToken.js');
 const router = express.Router();
 
 router.use(checkToken)
