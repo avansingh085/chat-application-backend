@@ -59,9 +59,9 @@ const generateJoinLink = async (conversationId) => {
     return link;
 };
 
-const joinGroupUsingLink = async (groupJoinId, conversationId, userId) => {
+const joinGroupUsingLink = async (groupJoinId, userId) => {
    
-    const link=await joinLink.findOne({conversationId});
+    const link=await joinLink.findOne({groupJoinId});
     
     if (!link) {
         throw new Error('Invalid groupJoinId');
@@ -71,9 +71,14 @@ const joinGroupUsingLink = async (groupJoinId, conversationId, userId) => {
     {
         throw new Error("invalid groupId");
     }
+
+    if(link.joinLinkExpiresAt<new Date())
+    {
+        throw new Error("link expired");
+    }
    
 
-    const conversation = await Conversation.findById(conversationId);
+    const conversation = await Conversation.findById(link.conversationId);
     if (!conversation) throw new Error('Conversation not found');
   
     const user = await User.findOne({ userId });
