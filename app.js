@@ -7,7 +7,7 @@ const startAutoDeleteJob=require('./jobs/autoDelete.job.js');
 require('dotenv').config();
 const {SESSION_SECRET} =require('./config/server.config.js');
 const authsRoutes = require('./routes/google.auth.route');
-require('./auth/google.auth');
+require('./config/auth/google.auth.js');
 const chatRoutes=require('./routes/chat.route');
 const authRoutes=require('./routes/auth.route');
 const userRoutes=require('./routes/user.route');
